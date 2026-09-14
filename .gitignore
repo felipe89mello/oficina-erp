@@ -1,0 +1,16 @@
+# Ambiente virtual
+venv/
+__pycache__/
+*.pyc
+
+# Banco de dados (nunca versionar dados de produção)
+*.db
+
+# Build do PyInstaller
+build/
+dist/
+*.spec
+
+# IDE
+.vscode/
+.idea/

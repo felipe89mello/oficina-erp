@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Oficina{% endblock %} — Sistema da Oficina</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark">✂</span>
+                <span class="brand-name">Oficina</span>
+            </div>
+            <nav>
+                <a href="/pedidos" class="{{ 'active' if active == 'pedidos' else '' }}">Pedidos</a>
+                <a href="/clientes" class="{{ 'active' if active == 'clientes' else '' }}">Clientes</a>
+                <a href="/financeiro" class="{{ 'active' if active == 'financeiro' else '' }}">Financeiro</a>
+            </nav>
+        </aside>
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

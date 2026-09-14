@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Clientes</h1>
+        <div class="subtitle">{{ clientes|length }} cadastrado(s)</div>
+    </div>
+    <a href="/clientes/novo" class="btn">+ Novo cliente</a>
+</div>
+
+{% if clientes %}
+<table class="ledger">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Endereço</th>
+            <th>Pedidos</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in clientes %}
+        <tr>
+            <td>{{ c.nome }}</td>
+            <td>{{ c.telefone or "—" }}</td>
+            <td>{{ c.endereco or "—" }}</td>
+            <td>{{ c.pedidos|length }}</td>
+            <td>
+                <a href="/clientes/{{ c.id }}/editar" class="btn btn-secondary btn-small">Editar</a>
+                <form class="inline-form" method="post" action="/clientes/{{ c.id }}/excluir"
+                      onsubmit="return confirm('Excluir {{ c.nome }}? Isso também remove os pedidos dele.');">
+                    <button type="submit" class="btn btn-danger btn-small">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">Nenhum cliente cadastrado ainda. Comece adicionando o primeiro.</div>
+{% endif %}
+{% endblock %}

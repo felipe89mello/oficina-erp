@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar cliente" if cliente else "Novo cliente" }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ "Editar cliente" if cliente else "Novo cliente" }}</h1>
+</div>
+
+<form class="stack" method="post"
+      action="{{ '/clientes/%d/editar' % cliente.id if cliente else '/clientes/novo' }}">
+    <div class="field">
+        <label>Nome</label>
+        <input type="text" name="nome" value="{{ cliente.nome if cliente else '' }}" required>
+    </div>
+    <div class="field">
+        <label>Telefone</label>
+        <input type="text" name="telefone" value="{{ cliente.telefone if cliente else '' }}">
+    </div>
+    <div class="field">
+        <label>Endereço</label>
+        <input type="text" name="endereco" value="{{ cliente.endereco if cliente else '' }}">
+    </div>
+    <div class="form-actions">
+        <button type="submit" class="btn">Salvar</button>
+        <a href="/clientes" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

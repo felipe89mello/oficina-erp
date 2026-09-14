@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Pedidos{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Pedidos</h1>
+        <div class="subtitle">{{ pedidos|length }} pedido(s)</div>
+    </div>
+    <a href="/pedidos/novo" class="btn">+ Novo pedido</a>
+</div>
+
+{% if pedidos %}
+<table class="ledger">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Descrição</th>
+            <th>Valor</th>
+            <th>Prazo</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pedidos %}
+        <tr>
+            <td>{{ p.cliente.nome }}</td>
+            <td>{{ p.descricao }}</td>
+            <td>R$ {{ "%.2f"|format(p.valor_total) }}</td>
+            <td>{{ p.prazo_entrega.strftime("%d/%m/%Y") if p.prazo_entrega else "—" }}</td>
+            <td>
+                {% if p.status == "Entregue" %}
+                    <span class="tag tag-ok">Entregue</span>
+                {% elif p.status == "Concluído" %}
+                    <span class="tag tag-ok">Concluído</span>
+                {% else %}
+                    <span class="tag tag-andamento">Em andamento</span>
+                {% endif %}
+            </td>
+            <td>
+                <a href="/pedidos/{{ p.id }}/editar" class="btn btn-secondary btn-small">Editar</a>
+                <form class="inline-form" method="post" action="/pedidos/{{ p.id }}/excluir"
+                      onsubmit="return confirm('Excluir este pedido?');">
+                    <button type="submit" class="btn btn-danger btn-small">Excluir</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-state">Nenhum pedido registrado ainda.</div>
+{% endif %}
+{% endblock %}

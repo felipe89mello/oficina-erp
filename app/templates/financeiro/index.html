@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Financeiro{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Financeiro</h1>
+</div>
+
+<div class="summary-row">
+    <div class="summary-card receber">
+        <div class="label">A receber (pendente)</div>
+        <div class="value">R$ {{ "%.2f"|format(total_a_receber) }}</div>
+    </div>
+    <div class="summary-card pagar">
+        <div class="label">A pagar (pendente)</div>
+        <div class="value">R$ {{ "%.2f"|format(total_a_pagar) }}</div>
+    </div>
+    <div class="summary-card saldo">
+        <div class="label">Saldo previsto</div>
+        <div class="value">R$ {{ "%.2f"|format(saldo_previsto) }}</div>
+    </div>
+</div>
+
+<section>
+    <h2>Contas a receber</h2>
+    {% if contas_receber %}
+    <table class="ledger">
+        <thead>
+            <tr><th>Descrição</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for c in contas_receber %}
+            <tr>
+                <td>{{ c.descricao }}</td>
+                <td>{{ c.vencimento.strftime("%d/%m/%Y") if c.vencimento else "—" }}</td>
+                <td>R$ {{ "%.2f"|format(c.valor) }}</td>
+                <td>
+                    {% if c.status == "Recebido" %}
+                        <span class="tag tag-ok">Recebido</span>
+                    {% else %}
+                        <span class="tag tag-pendente">Pendente</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form class="inline-form" method="post" action="/financeiro/receber/{{ c.id }}/marcar">
+                        <button type="submit" class="btn btn-secondary btn-small">
+                            {{ "Marcar pendente" if c.status == "Recebido" else "Marcar recebido" }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">Nenhuma conta a receber ainda. Elas aparecem aqui quando você cria um pedido.</div>
+    {% endif %}
+</section>
+
+<section>
+    <h2>Contas a pagar</h2>
+    {% if contas_pagar %}
+    <table class="ledger">
+        <thead>
+            <tr><th>Descrição</th><th>Categoria</th><th>Vencimento</th><th>Valor</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for c in contas_pagar %}
+            <tr>
+                <td>{{ c.descricao }}</td>
+                <td>{{ c.categoria or "—" }}</td>
+                <td>{{ c.vencimento.strftime("%d/%m/%Y") if c.vencimento else "—" }}</td>
+                <td>R$ {{ "%.2f"|format(c.valor) }}</td>
+                <td>
+                    {% if c.status == "Pago" %}
+                        <span class="tag tag-ok">Pago</span>
+                    {% else %}
+                        <span class="tag tag-pendente">Pendente</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <form class="inline-form" method="post" action="/financeiro/pagar/{{ c.id }}/marcar">
+                        <button type="submit" class="btn btn-secondary btn-small">
+                            {{ "Marcar pendente" if c.status == "Pago" else "Marcar pago" }}
+                        </button>
+                    </form>
+                    <form class="inline-form" method="post" action="/financeiro/pagar/{{ c.id }}/excluir"
+                          onsubmit="return confirm('Excluir esta conta?');">
+                        <button type="submit" class="btn btn-danger btn-small">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">Nenhuma conta a pagar cadastrada.</div>
+    {% endif %}
+
+    <h3 style="font-size:14px; margin-top:22px;">Nova conta a pagar</h3>
+    <form class="stack" method="post" action="/financeiro/pagar/novo">
+        <div class="field">
+            <label>Descrição</label>
+            <input type="text" name="descricao" placeholder="Ex: Tecido, linha, energia..." required>
+        </div>
+        <div class="field">
+            <label>Categoria</label>
+            <input type="text" name="categoria" placeholder="Ex: Tecido, aviamento, luz...">
+        </div>
+        <div class="field">
+            <label>Valor (R$)</label>
+            <input type="number" step="0.01" min="0" name="valor" required>
+        </div>
+        <div class="field">
+            <label>Vencimento</label>
+            <input type="date" name="vencimento">
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn">Adicionar</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
