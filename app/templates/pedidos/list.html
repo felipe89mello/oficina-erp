@@ -14,7 +14,8 @@
     <thead>
         <tr>
             <th>Cliente</th>
-            <th>Descrição</th>
+            <th>Peça</th>
+            <th>Serviço</th>
             <th>Valor</th>
             <th>Prazo</th>
             <th>Status</th>
@@ -26,6 +27,7 @@
         <tr>
             <td>{{ p.cliente.nome }}</td>
             <td>{{ p.descricao }}</td>
+            <td>{{ p.descricao_servico or "—" }}</td>
             <td>R$ {{ "%.2f"|format(p.valor_total) }}</td>
             <td>{{ p.prazo_entrega.strftime("%d/%m/%Y") if p.prazo_entrega else "—" }}</td>
             <td>

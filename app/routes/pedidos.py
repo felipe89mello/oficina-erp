@@ -38,6 +38,7 @@ def novo_pedido_form(request: Request, db: Session = Depends(get_db)):
 def criar_pedido(
     cliente_id: int = Form(...),
     descricao: str = Form(...),
+    descricao_servico: str = Form(""),
     valor_total: float = Form(...),
     data_pedido: str = Form(...),
     prazo_entrega: str = Form(""),
@@ -47,6 +48,7 @@ def criar_pedido(
     pedido = Pedido(
         cliente_id=cliente_id,
         descricao=descricao,
+        descricao_servico=descricao_servico or None,
         valor_total=valor_total,
         data_pedido=_parse_date(data_pedido) or date.today(),
         prazo_entrega=_parse_date(prazo_entrega),
@@ -83,6 +85,7 @@ def atualizar_pedido(
     pedido_id: int,
     cliente_id: int = Form(...),
     descricao: str = Form(...),
+    descricao_servico: str = Form(""),
     valor_total: float = Form(...),
     data_pedido: str = Form(...),
     prazo_entrega: str = Form(""),
@@ -93,6 +96,7 @@ def atualizar_pedido(
     pedido = db.query(Pedido).filter(Pedido.id == pedido_id).first()
     pedido.cliente_id = cliente_id
     pedido.descricao = descricao
+    pedido.descricao_servico = descricao_servico or None
     pedido.valor_total = valor_total
     pedido.data_pedido = _parse_date(data_pedido) or pedido.data_pedido
     pedido.prazo_entrega = _parse_date(prazo_entrega)

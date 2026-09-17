@@ -20,7 +20,8 @@ class Pedido(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     cliente_id = Column(Integer, ForeignKey("clientes.id"), nullable=False)
-    descricao = Column(String, nullable=False)
+    descricao = Column(String, nullable=False)  # Descrição da peça
+    descricao_servico = Column(String, nullable=True)  # Descrição do serviço
     valor_total = Column(Float, nullable=False, default=0)
     data_pedido = Column(Date, nullable=False, default=date.today)
     prazo_entrega = Column(Date, nullable=True)

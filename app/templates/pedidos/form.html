@@ -23,8 +23,12 @@
         </select>
     </div>
     <div class="field">
-        <label>Descrição da peça/serviço</label>
+        <label>Descrição da peça</label>
         <input type="text" name="descricao" value="{{ pedido.descricao if pedido else '' }}" required>
+    </div>
+    <div class="field">
+        <label>Descrição do serviço</label>
+        <textarea name="descricao_servico" rows="3">{{ pedido.descricao_servico if pedido and pedido.descricao_servico else '' }}</textarea>
     </div>
     <div class="field">
         <label>Valor total (R$)</label>

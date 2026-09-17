@@ -6,6 +6,44 @@
 </div>
 
 <div class="summary-row">
+    <div class="summary-card faturamento">
+        <div class="label">Faturamento (mês)</div>
+        <div class="value">R$ {{ "%.2f"|format(faturamento_mes) }}</div>
+    </div>
+    <div class="summary-card despesas">
+        <div class="label">Despesas (mês)</div>
+        <div class="value">R$ {{ "%.2f"|format(despesas_mes) }}</div>
+    </div>
+    <div class="summary-card liquido">
+        <div class="label">Líquido (mês)</div>
+        <div class="value">R$ {{ "%.2f"|format(liquido_mes) }}</div>
+    </div>
+</div>
+
+<section>
+    <h2>Faturamento x Despesas — últimos 6 meses</h2>
+    <div class="chart">
+        {% for m in resumo_mensal %}
+        <div class="chart-col">
+            <div class="chart-bars">
+                <div class="bar bar-faturamento"
+                     style="height: {{ (m.faturamento / maior_valor_grafico * 100)|round(1) }}%"
+                     title="Faturamento: R$ {{ '%.2f'|format(m.faturamento) }}"></div>
+                <div class="bar bar-despesas"
+                     style="height: {{ (m.despesas / maior_valor_grafico * 100)|round(1) }}%"
+                     title="Despesas: R$ {{ '%.2f'|format(m.despesas) }}"></div>
+            </div>
+            <div class="chart-label">{{ m.label }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="chart-legend">
+        <span><i class="dot dot-faturamento"></i> Faturamento</span>
+        <span><i class="dot dot-despesas"></i> Despesas</span>
+    </div>
+</section>
+
+<div class="summary-row" style="margin-top:28px;">
     <div class="summary-card receber">
         <div class="label">A receber (pendente)</div>
         <div class="value">R$ {{ "%.2f"|format(total_a_receber) }}</div>

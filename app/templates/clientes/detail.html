@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ cliente.nome }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>{{ cliente.nome }}</h1>
+        <div class="subtitle">{{ cliente.telefone or "Sem telefone" }} · {{ cliente.endereco or "Sem endereço" }}</div>
+    </div>
+    <div>
+        <a href="/clientes/{{ cliente.id }}/editar" class="btn btn-secondary">Editar cliente</a>
+        <a href="/pedidos/novo" class="btn">+ Novo pedido</a>
+    </div>
+</div>
+
+<section>
+    <h2>Histórico de serviços</h2>
+    {% if pedidos %}
+    <table class="ledger">
+        <thead>
+            <tr>
+                <th>Peça</th>
+                <th>Serviço</th>
+                <th>Valor</th>
+                <th>Data do pedido</th>
+                <th>Prazo</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in pedidos %}
+            <tr>
+                <td>{{ p.descricao }}</td>
+                <td>{{ p.descricao_servico or "—" }}</td>
+                <td>R$ {{ "%.2f"|format(p.valor_total) }}</td>
+                <td>{{ p.data_pedido.strftime("%d/%m/%Y") }}</td>
+                <td>{{ p.prazo_entrega.strftime("%d/%m/%Y") if p.prazo_entrega else "—" }}</td>
+                <td>
+                    {% if p.status in ("Entregue", "Concluído") %}
+                        <span class="tag tag-ok">{{ p.status }}</span>
+                    {% else %}
+                        <span class="tag tag-andamento">{{ p.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">Esse cliente ainda não tem nenhum pedido registrado.</div>
+    {% endif %}
+</section>
+
+<p style="margin-top:24px;"><a href="/clientes">← Voltar para Clientes</a></p>
+{% endblock %}

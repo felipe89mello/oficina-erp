@@ -29,8 +29,33 @@ def get_db():
         db.close()
 
 
+def _coluna_existe(tabela: str, coluna: str) -> bool:
+    with engine.connect() as conn:
+        linhas = conn.exec_driver_sql(f"PRAGMA table_info({tabela})").fetchall()
+    return any(linha[1] == coluna for linha in linhas)
+
+
+def _adicionar_coluna_se_faltar(tabela: str, coluna: str, definicao_sql: str):
+    """Migração leve: adiciona uma coluna a uma tabela já existente.
+
+    create_all() só cria tabelas novas — ele nunca altera uma tabela que
+    já existe no banco. Como não usamos uma ferramenta de migração (tipo
+    Alembic) nesse projeto pequeno, qualquer coluna nova que adicionarmos
+    no models.py precisa de uma linha aqui para chegar ao banco real do
+    sogro sem perder os dados que já estão lá.
+    """
+    if not _coluna_existe(tabela, coluna):
+        with engine.begin() as conn:
+            conn.exec_driver_sql(f"ALTER TABLE {tabela} ADD COLUMN {definicao_sql}")
+
+
 def init_db():
     # Importa os models aqui dentro para garantir que todas as tabelas
     # sejam registradas no Base antes do create_all.
     from app import models  # noqa: F401
     Base.metadata.create_all(bind=engine)
+
+    # Migrações leves — cada linha cobre uma coluna nova adicionada
+    # depois da versão inicial do banco. Rodar de novo não faz mal:
+    # _adicionar_coluna_se_faltar já verifica se a coluna existe antes.
+    _adicionar_coluna_se_faltar("pedidos", "descricao_servico", "descricao_servico TEXT")

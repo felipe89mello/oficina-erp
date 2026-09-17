@@ -23,7 +23,7 @@
     <tbody>
         {% for c in clientes %}
         <tr>
-            <td>{{ c.nome }}</td>
+            <td><a href="/clientes/{{ c.id }}">{{ c.nome }}</a></td>
             <td>{{ c.telefone or "—" }}</td>
             <td>{{ c.endereco or "—" }}</td>
             <td>{{ c.pedidos|length }}</td>

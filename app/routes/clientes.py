@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Cliente
+from app.models import Cliente, Pedido
 
 router = APIRouter(prefix="/clientes", tags=["clientes"])
 templates = Jinja2Templates(directory="app/templates")
@@ -36,6 +36,21 @@ def criar_cliente(
     db.add(cliente)
     db.commit()
     return RedirectResponse(url="/clientes", status_code=303)
+
+
+@router.get("/{cliente_id}")
+def detalhe_cliente(cliente_id: int, request: Request, db: Session = Depends(get_db)):
+    cliente = db.query(Cliente).filter(Cliente.id == cliente_id).first()
+    pedidos = (
+        db.query(Pedido)
+        .filter(Pedido.cliente_id == cliente_id)
+        .order_by(Pedido.data_pedido.desc())
+        .all()
+    )
+    return templates.TemplateResponse(
+        "clientes/detail.html",
+        {"request": request, "cliente": cliente, "pedidos": pedidos, "active": "clientes"},
+    )
 
 
 @router.get("/{cliente_id}/editar")
